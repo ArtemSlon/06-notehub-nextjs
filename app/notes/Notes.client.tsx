@@ -7,6 +7,7 @@ import { useState } from "react";
 import Modal from "@/components/Modal/Modal";
 import NoteForm from "@/components/NoteForm/NoteForm";
 import SearchBox from "@/components/SearchBox/SearchBox";
+import Pagination from "@/components/Pagination/Pagination";
 
 export default function NotesClient() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -33,7 +34,18 @@ export default function NotesClient() {
   return (
     <div className={css.app}>
       <div className={css.toolbar}>
-        <SearchBox value={search} onChange={setSearch} />
+        <SearchBox
+          value={search}
+          onChange={(value) => {
+            setSearch(value);
+            setPage(1);
+          }}
+        />
+        <Pagination
+  currentPage={page}
+  pageCount={data.totalPages}
+  onPageChange={setPage}
+/>
         <button
           className={css.button}
           onClick={() => setIsModalOpen(true)}
