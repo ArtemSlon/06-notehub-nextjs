@@ -8,23 +8,24 @@ import Modal from "@/components/Modal/Modal";
 import NoteForm from "@/components/NoteForm/NoteForm";
 import SearchBox from "@/components/SearchBox/SearchBox";
 import Pagination from "@/components/Pagination/Pagination";
+import { useDebounce } from "use-debounce";
 
 export default function NotesClient() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [search, setSearch] = useState<string>("");
+  const [page, setPage] = useState<number>(1);
   const perPage = 12;
+  const [debouncedSearch] = useDebounce(search, 500);
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["notes", { page, perPage, search }],
-    queryFn: ({ queryKey }) => {
-      const [, params] = queryKey as [
-        string,
-        { page: number; perPage: number; search?: string }
-      ];
-
-      return fetchNotes(params);
-    },
+    queryKey: ["notes", { page, perPage, search, debouncedSearch }],
+    queryFn: () =>
+      fetchNotes({
+        page,
+        perPage,
+        search: debouncedSearch,
+      }),
+    placeholderData: (previousData) => previousData,
   });
 
   if (isLoading) return <p>Loading, please wait...</p>;
@@ -36,16 +37,20 @@ export default function NotesClient() {
       <div className={css.toolbar}>
         <SearchBox
           value={search}
-          onChange={(value) => {
+          onChange={(value: string) => {
             setSearch(value);
             setPage(1);
           }}
         />
+        {data.totalPages > 1 && (
         <Pagination
-  currentPage={page}
-  pageCount={data.totalPages}
-  onPageChange={setPage}
-/>
+          currentPage={page}
+          pageCount={data.totalPages}
+          onPageChange={(selectedPage: number) =>
+            setPage(selectedPage)
+          }
+        />
+      )}
         <button
           className={css.button}
           onClick={() => setIsModalOpen(true)}
