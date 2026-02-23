@@ -18,7 +18,7 @@ export default function NotesClient() {
   const [debouncedSearch] = useDebounce(search, 500);
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["notes", { page, perPage, search, debouncedSearch }],
+    queryKey: ["notes", { page, perPage, debouncedSearch }],
     queryFn: () =>
       fetchNotes({
         page,

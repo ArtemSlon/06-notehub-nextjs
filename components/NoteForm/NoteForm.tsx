@@ -9,10 +9,17 @@ import * as Yup from "yup";
 interface NoteFormProps {
   onCancel: () => void;
 }
+type NoteTag =
+  | "Personal"
+  | "Meeting"
+  | "Shopping"
+  | "Todo"
+  | "Work";
+
 interface NoteFormValues {
   title: string;
   content: string;
-  tag: "Personal" | "Meeting" | "Shopping";
+  tag: NoteTag;
 }
 
 
@@ -37,14 +44,16 @@ export default function NoteForm({ onCancel }: NoteFormProps) {
     });
   };
   const validationSchema = Yup.object({
-  title: Yup.string()
+    title: Yup.string()
+      .min(3, "Minimum 3 characters")
+    .max(50, "Maximum 50 characters")
     .required("Title is required"),
 
   content: Yup.string()
-    .required("Content is required"),
+    .max(500, "Maximum 500 characters"),
 
   tag: Yup.string()
-    .oneOf(["Personal", "Meeting", "Shopping"])
+    .oneOf(["Personal", "Meeting", "Shopping", "Todo", "Work"])
     .required("Tag is required"),
 });
 
@@ -62,6 +71,8 @@ export default function NoteForm({ onCancel }: NoteFormProps) {
           <option value="Personal">Personal</option>
             <option value="Meeting">Meeting</option>
             <option value="Shopping">Shopping</option>
+            <option value="Todo">Todo</option>
+            <option value="Work">Work</option>
         </Field>
 
         <button type="submit" disabled={mutation.isPending}>
