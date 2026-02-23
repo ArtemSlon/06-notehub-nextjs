@@ -64,17 +64,28 @@ export default function NoteForm({ onCancel }: NoteFormProps) {
       onSubmit={handleSubmit}
     >
       <Form className={css.form}>
-        <Field name="title" placeholder="Title" />
-        <ErrorMessage name="title" component="div" />
-        <Field name="content" placeholder="Content" />
-        <Field as="select" name="tag">
-          <option value="Personal">Personal</option>
+         <div>
+          <Field name="title" placeholder="Title" />
+          <ErrorMessage name="title" component="div" />
+        </div>
+        <div>
+          <Field
+            as="textarea"
+            name="content"
+            placeholder="Content"
+          />
+          <ErrorMessage name="content" component="div" />
+        </div>
+        <div>
+          <Field as="select" name="tag">
+            <option value="Personal">Personal</option>
             <option value="Meeting">Meeting</option>
             <option value="Shopping">Shopping</option>
             <option value="Todo">Todo</option>
             <option value="Work">Work</option>
-        </Field>
-
+          </Field>
+          <ErrorMessage name="tag" component="div" />
+        </div>
         <button type="submit" disabled={mutation.isPending}>
           {mutation.isPending ? "Creating..." : "Create note"}
         </button>
